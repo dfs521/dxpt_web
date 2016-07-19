@@ -1,0 +1,35 @@
+﻿<style>
+    #bg_img{top:0px;left: 0px;position: absolute;
+        z-index: -1;-webkit-transition:top .8s,left .8s,width .8s,height .8s;
+        transition:top .8s,left .8s,width .8s,height .8s;}
+    #main .img_bg-pos11{width: 1920px;height: 1080px;top:0px;left: 0px;}
+    #main .img_bg-pos12{width: 1920px;height: 1080px;top:0px;left: -150px;}
+    #main .img_bg-pos13{width: 1920px;height: 1080px;top:0px;left: -300px;}
+    #main .img_bg-pos14{width: 1920px;height: 1080px;top:0px;left: -450px;}
+    .m-hd{height: 45px;font-size: 20px}
+    .m-hd>p{width: 65px;height: 100%;display: inline-block;text-align: center;
+        color: white;line-height: 44px;}
+
+    #nav{height: 60px;}
+    #nav>p{font-size:24px;display: inline-block;line-height: 60px;width: 180px;text-align: center;height: 60px}
+    #nav .active{font-weight: bold;}
+
+    #m-bd{position: relative;overflow:hidden;}
+    #m-bd>div{padding: 15px 0px 0px 20px;}
+    #m-bd{background-color:rgba(255,255,255,.9);}
+
+</style>  
+
+<div class="m-hd g-bc5">
+        <p class="bg1-h" ng-click='jump()'><span class="icon-arrow-left2"></span></p>
+        <span>&nbsp;&nbsp;{{paperName}}</span>
+</div> 
+<nav id='nav' class="g-bc5">
+    <p class="f-cp" ng-repeat="item in navItem" ng-class="{true:'active',false:'g-fc2'}[item.is_active]" ng-click='navClick(item)'>
+        {{item.name}}
+    </p>  
+</nav>
+<div id='m-bd' cus='exercise'>
+    <div id='excrcise_view' ui-view class="fade"></div>
+    <img src="v4/img/bg2.jpg" alt="" id="bg_img">    
+</div>  

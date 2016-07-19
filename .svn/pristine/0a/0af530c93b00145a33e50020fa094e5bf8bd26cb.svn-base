@@ -1,0 +1,48 @@
+﻿<style>
+    body{background-color: #E6E6E6;}
+    
+    .m-hd{height: 45px;font-size: 20px}
+    .m-hd>p{width: 65px;height: 100%;display: inline-block;text-align: center;
+        color: white;line-height: 44px;}
+
+    .m-item{height: 100px;border: solid 1px #E0E0E0;margin:1em 1.5em;background-color: #F3F3F3;box-shadow: 0px 0px 10px #E0E0E0;}
+    .m-item .u-v1{width: 80%;}
+
+    .u-v1-v1{height: 100px;line-height: 100px;float: left;width: 100px;font-size: 30px;text-align: center;}
+    .u-v1-v2{float: left;height: 100px;}
+    .u-v1-v2>p:first-child{height: 50px;line-height: 70px;font-size: 20px;vertical-align: bottom;}
+    .u-v1-v2>p:last-child{font-size: 17px;height: 50px;}
+
+    .u-v1-v3{height: 100px;line-height: 100px;float: left;width: 400px;font-size: 17px;text-align: center;}
+    .u-v1-v3.gray{color: gray}
+    .u-v1-v3.red{color: red}
+    .u-v1-v3.green{color: green}
+
+    .m-item .u-v2{margin-left: 80%;font-size: 3em;text-align: right;padding-right: 1em;line-height: 100px;font-weight: bold;}
+
+    .m-null{text-align: center;padding-top: 3em;}
+</style>
+<div class="m-hd">
+        <p class="bg1-h" ng-click='back()'><span class="icon-arrow-left2"></span></p>
+        <span>&nbsp;&nbsp;练习列表</span>
+</div> 
+<div class="g-bd">
+    <div ng-repeat="item in items" class="m-item g-l-r f-cp" ng-click="jump(item)">
+        <div class="u-v1">
+            <div class="u-v1-v1">
+                <b>{{$index+1}}</b>
+            </div>
+            <div class="u-v1-v2">
+                <p><b>{{item.name}}</b></p>
+                <p class="g-fc3">共 {{item.qNumber}} 道习题, 总分 {{item.score}} 分</p>
+            </div>
+            <div class="u-v1-v3" ng-class="{'red':item.status==0,'green':item.status==1,'gray':item.status==2}">{{item.view_status}}</div>            
+        </div>
+        <div class="u-v2">
+            <a href="" title="进入练习"><span class="icon-chevron-right"></span></a>
+        </div>
+    </div>
+    <div class="m-null" ng-if="items.length==0">
+        <h1>暂无作业</h1>
+    </div>
+</div>

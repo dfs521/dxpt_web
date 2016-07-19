@@ -1,0 +1,54 @@
+﻿/*************主色********************/
+/*暗*/
+.bg,#login_page,.bg1-h,
+.p-radio .s-bg,
+.m-gp.act,.m-stu.act
+{background-color: #1979CA}
+
+.clr,a,a:link,.g-fc4-h:hover,.g-fc3-h:hover,.f-AV .s1,
+.m-sch .u3>div:last-child>p:hover>span:last-child,
+.s-ftc,.f-hv:hover
+{color: #1979CA}
+
+.bdc,.ipt-txt-focus,.def-txt:focus,.def-txt2,
+.edui-combobox-menu,.edui-popup .edui-popup-body,
+.ngdialog.ngdialog-theme-default .ngdialog-content,
+.m-sch .u3>div:last-child>p:hover,.m-rank.act
+{border-color: #1979CA}
+
+/*亮*/
+.bg-h,.bg1-h:hover,.ng-pagination>ul>li.active,.ng-pagination>ul>li:hover,
+#m-ft>div .g-fc4-h:hover
+{background-color: #298CE1;}
+.edui-btn-toolbar .edui-btn.edui-hover,
+.edui-btn-toolbar .edui-btn.edui-active
+{text-shadow: 0px 0px 10px #298CE1;-webkit-text-shadow: 0px 0px 10px #298CE1;}
+
+
+/*-------2暗-------*/
+.bg2-h,.bg2
+{background-color: #91B9D8;}
+/*-------2亮-------*/
+.bg2-h:hover,.bg2a
+{background-color: #629CCA;}
+
+
+/*-------3暗-------*/
+.tree .active,.tree .active:hover,
+.bg3{background-color: #CCE8FF}
+
+.bg3bdc,.tree .active
+{border-color: #99D1FF}
+
+/*-------3亮-------*/
+.bg3-h,.tree>li p:hover,.bg3a
+{background-color: #E5F3FF}
+
+
+
+
+/*************对比色********************/
+#msg,.db
+{background-color: rgb(224,127,40);}
+
+.dbfc{color: rgb(224,127,40);}

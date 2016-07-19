@@ -1,0 +1,24 @@
+﻿<style>
+    .dlg-bd{cursor: default;padding-right: .2em;overflow-y:auto;height: 600px; }
+    .ngdialog.ngdialog-theme-default .ngdialog-content{width: 550px;margin-right: 2px}
+    .ngdialog.ngdialog-theme-default{padding: 0px}
+</style>
+<div class="dlg-tt g-bc5"><span class="icon-inbox clr"></span>&nbsp;&nbsp;章节预设</div>
+<div class="dlg-bd">
+    <ul class="tree">
+        <li ng-repeat="item in items">
+            <p ng-class="{'tt-at':item.is_ttat}" ng-click="item_fn(item)">
+                &nbsp;&nbsp;
+                <span ng-class="{true:'icon-angle-down',false:'icon-angle-right'}[item.is_ttat]">
+                </span>
+                &nbsp;&nbsp;{{item.ttname}}
+            </p>
+            <div id="{{item.id}}">
+                <p ng-click="row_fn(row)" ng-repeat="row in item.rows" ng-class="{'active':row.is_rowat}" repeat-done="rpdone_fn()">
+                    <span class="icon-price-tag"></span>&nbsp;{{row.rowname}}
+                </p>
+            </div>
+        </li>
+    </ul>
+</div>
+

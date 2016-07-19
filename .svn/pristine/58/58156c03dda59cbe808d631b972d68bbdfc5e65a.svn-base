@@ -1,0 +1,4 @@
+﻿<style>
+    body{overflow: hidden;}
+</style>
+<div id="no-msg" msg="false"></div>

@@ -1,0 +1,23 @@
+﻿<style>
+#main{overflow-y:auto;}
+.g-bd{padding: 1em 2em;font-size: 20px;}
+.m-tb .db{color: white;}
+</style>
+<div class="g-bd">
+    <table class="m-tb">
+        <thead>
+            <tr>
+                <th>学号</th><th>姓名</th>
+                <th>表扬次数</th><th>批评次数</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in items" ng-class="{'db':item.isMake}">
+                <td>{{$index+1}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.praiseCount}}</td>
+                <td>{{item.criticCount}}</td>
+            </tr>
+        </tbody>
+    </table>      
+</div> 

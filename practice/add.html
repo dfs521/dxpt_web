@@ -1,0 +1,53 @@
+﻿<style>
+    .g-hd .v1,.g-hd .v2{margin-bottom: .5em}
+    .g-hd .v1>span,.g-hd .v2>span{font-size: 1.1em;}
+    .g-hd .v1>p,.g-hd .v2>p{display: inline-block;font-size: 16px}
+    .g-hd .v1>b{font-size: 1.5em}
+    .g-hd .v2>b{font-size: 1.2em}
+
+    .m-tool{position: relative;margin: 1em 0px}
+    .m-tool>div:first-child{margin-right: 200px;}
+    .m-tool>div:last-child{position: absolute;top: 0;right: 0;}
+
+    .m-tb .td2>input{text-align: center;width: 50px;}
+</style>
+<div class="g-hd">
+    <div class="v1">
+        <b>默认教材</b>&nbsp;&nbsp;<p ng-click="change_JC()" class="g-fc4-h f-cp"><span class="icon-exchange"></span></p>
+        <br><span class="g-fc2">{{bookName}}</span>
+    </div>
+    <div class="v2">
+        <b>预设章节</b>&nbsp;&nbsp;<p ng-click="change_ZJ()" class="g-fc4-h f-cp"><span class="icon-exchange"></span></p>
+        <br><span class="g-fc2">{{section.rowname}}</span>
+    </div>         
+</div>
+<div class="m-tool">
+    <div><b>练习名称：</b><input class="def-txt w300" maxlength="20" type="text" ng-model="defName" placeholder="请输入练习名称"></div>    
+    <div>
+        <button class="bg1-h" ng-click="AUQtypeFn()" ><span class="icon-plus"></span>&nbsp;添加题型</button>
+    </div>
+</div>
+<table class="m-tb">
+    <thead>
+        <tr>
+            <th>题型</th><th>题量</th>
+            <th>章节</th><th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in view_list">
+            <td>{{item.name}}</td>
+            <td class="td2">
+                <button class="bg1-h" ng-click="reduce_number(item)"><span class="icon-minus"></span></button>
+                <input maxlength="2" type="text" class="def-txt" ng-model="item.number">
+                <button class="bg1-h" ng-click="add_number(item)"><span class="icon-plus"></span></button>
+            </td>
+            <td>{{item.range}}</td>
+            <td>
+                <a href="" ng-click="AUQtypeFn(item)" title="编辑"><span class="icon-edit"></span></a>
+                &nbsp;&nbsp;
+                <a href="" ng-click="delQtypeFn(item)" title="删除"><span class="icon-trash"></span></a>        
+            </td>
+        </tr>
+    </tbody>
+</table>   

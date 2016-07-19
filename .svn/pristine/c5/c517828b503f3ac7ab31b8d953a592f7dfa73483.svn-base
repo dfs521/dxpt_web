@@ -1,0 +1,83 @@
+﻿<style>
+    .w100{width: 100px;}
+    .m-sch{text-align: right;}
+    .m-sch .u2{border-style: solid; border-width: 1px;text-align: left;margin-top: .5em}
+    .m-sch .u2>div:first-child{border-bottom-style:dashed;border-bottom-width: 1px }
+    .m-sch .u2-c1{position: relative;height: 37px;}
+    .m-sch .u2-c1>div:first-child{position: absolute;top:0;left: 0;width: 100px;height: 100%;line-height: 37px;text-indent: 1em}
+    .m-sch .u2-c1>div:last-child{margin-left: 100px;}
+    .m-sch .u2-c1>div:last-child>p{display: inline-block;text-align: center;height: 100%;line-height: 37px;}
+
+    .m-sch .u3{margin-top: 1em;text-align: left;height: 22px;}
+    .m-sch .u3>div:first-child{width: 100px;text-indent: 1em}
+    .m-sch .u3>div:last-child{margin-left: 100px;}
+    .m-sch .u3>div:last-child>p{display: inline-block;border-style: solid; border-width: 1px;}
+
+    .m-tb .td1{width: 60%;word-break:break-all;padding-right: 11px;}
+    .f-margin{margin: 1em 0px}
+</style>
+<div class="m-sch">
+    <div class="u1">
+        <input type="text" class="def-txt2 w300"  maxlength="20" ng-model="myval" ng-keydown="keyDownFn($event)" placeholder="请输入试题内容"><button class="bg1-h" ng-click="sel()" ><span class="icon-search f-cp"></span>&nbsp;查 询</button>
+    </div>
+    <div class="u2 g-bdc5">
+        <div class="u2-c1 g-bdc5">
+            <div class="g-fc2">
+                题型：
+            </div>
+            <div>
+                <p ng-class="{true:'s-ftc',false:''}[item.is_active]" class="f-cp w100 f-hv" ng-click="sel_qtype(item)" ng-repeat="item in q_list">{{item.name}}</p>
+            </div>
+        </div>
+        <div class="u2-c1">
+            <div class="g-fc2">
+                章节：
+            </div>
+            <div>
+                <p ng-show="active_chapter?true:false">{{active_chapter.rowname}}</p>
+                <p class="w100 f-cp f-hv" ng-click="sel_chapter()"><span class="icon-exchange"></span></p>
+            </div>
+        </div>             
+    </div>
+    <div class="u3 g-l-r">
+        <div class="g-fc2">所属分类></div>
+        <div>
+            <p ng-show="active_qname?true:false" class="g-bdc5 f-cp" ng-click="del_active_qname()">
+                &nbsp;&nbsp;{{active_qname.name}}
+                &nbsp;&nbsp;<span class="icon-times"></span>&nbsp;&nbsp;
+            </p>
+            <p ng-show="active_chapter?true:false" class="g-bdc5" ng-click="del_active_chapter()">
+                &nbsp;&nbsp;{{active_chapter.rowname}}
+                &nbsp;&nbsp;<span class="icon-times"></span>&nbsp;&nbsp;
+            </p>
+        </div>
+    </div>
+</div>  
+<table class="m-tb f-margin">
+    <thead>
+        <tr>
+            <th>题干</th><th>题型</th>
+            <th>答案</th><th>最后修改时间</th><th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in items">
+            <td class="td1" ng-bind-html="item.cot"></td>
+            <td>{{item.qname}}</td>
+            <td>{{item.answer}}</td>
+            <td>{{item.time}}</td>
+            <td>
+                <a href="" title="编辑" ng-click="eidt_add_fn(item)"><span class="icon-edit"></span></a>
+                &nbsp;&nbsp;
+                <a href="" title="删除" ng-click="del_fn(item)"><span class="icon-trash"></span></a>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                <pager record-count="recordCount" page-size="pageSize" current-page="currentPage" on-page-change="onPageChange()"></pager>
+            </td>
+        </tr>
+    </tfoot>
+</table>    

@@ -1,0 +1,38 @@
+﻿<style>
+    .g-rank{overflow-y:auto; }
+    .m-rank{display: inline-block;width: 180px;height: 89px;margin-right: 2em;margin: 1em;position: relative;
+        }
+    .m-rank>img{height: 89px;width: 89px;-webkit-border-radius: 45px;border-radius: 45px;position: absolute;z-index: 2;
+        left:0;top:0;}
+    .m-rank .u-v2{position: absolute;left: 45px;top: 0px;color: white;height: 100%;z-index: 1;width: 145px;border-bottom-right-radius: 30px;}
+    .m-rank .u-v2>p{padding-left: 55px;height: 29px;line-height: 29px;}
+    .m-rank .s-gray{background-color: gray;}
+
+    .gray {-webkit-filter: grayscale(100%);filter: grayscale(100%);filter: gray;}    
+
+    /*.m-rank6{display: inline-block;color:white;}
+    .hexagon {width: 100px;height: 55px;position: relative;background: gray;line-height: 55px;text-align:center}
+    .hexagon:before {content: "";position: absolute;top: -25px; left: 0;width: 0;height: 0;border-left: 50px solid transparent;border-right: 50px solid transparent;border-bottom: 25px solid gray;}
+    .hexagon:after {content: "";position: absolute;bottom: -25px; left: 0;width: 0;height: 0;border-left: 50px solid transparent;border-right: 50px solid transparent;border-top: 25px solid gray;}
+
+    .hexagon1 {width: 100px;height: 55px;position: relative;background: rgb(51,182,121);line-height: 55px;text-align:center}
+    .hexagon1:before {content: "";position: absolute;top: -25px; left: 0;width: 0;height: 0;border-left: 50px solid transparent;border-right: 50px solid transparent;border-bottom: 25px solid rgb(51,182,121);}
+    .hexagon1:after {content: "";position: absolute;bottom: -25px; left: 0;width: 0;height: 0;border-left: 50px solid transparent;border-right: 50px solid transparent;border-top: 25px solid rgb(51,182,121);}   */
+
+
+</style>
+<div id='g-rank'>
+    <div class="m-rank" ng-repeat="item in items">
+    <img ng-src="{{item.head}}" onerror="javascript:this.src='img/tx.jpg';"  ng-class="{'gray':!item.state}" alt=""/>
+    <div class="u-v2" ng-class="{true:item.bg,false:'s-gray'}[item.state]">
+        <p>{{item.stuName}}</p>
+        <p></p>
+        <p></p>
+    </div>    
+</div>
+</div>
+<!--<div id="m-rank-bd">
+
+</div>-->
+
+

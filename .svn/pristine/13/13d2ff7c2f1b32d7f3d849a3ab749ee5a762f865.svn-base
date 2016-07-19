@@ -1,0 +1,43 @@
+﻿<style>
+    .g-link{position: relative;}
+    .g-link>table{left: 0px;width: 840px;position: absolute;top: 0px;}
+    .g-link-r{margin-left:860px;}
+    .g-link-r>p{font-size:1.2em;text-align: right;height: 37px;line-height: 37px;margin-bottom: 5px}
+    .db{color: white}
+
+    .m-node{min-height: 35px;line-height: 35px;text-align: left;border-left-style: solid;border-left-width: 2px;margin-bottom:10px;padding-left: 1em}
+    .m-node>a{font-size: 16px}
+</style>
+<div class="g-link">
+    <table class="m-tb">
+        <thead>
+            <tr>
+                <th>序号</th><th>学案名称</th><th>最后修改时间</th><th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in rows" ng-class="{'db':item.is_active}">
+                <td>{{$index+1}}</td>
+                <td>{{item.cot}}</td>
+                <td>{{item.time}}</td>
+                <td style="line-height: 1">
+                    <a href="" ng-hide="item.is_active" title="关联学案" ng-click="link_fn(item)"><span class="icon-link2"></span></a>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <pager record-count="recordCount" page-count="pageCount" current-page="currentPage" on-page-change="onPageChange()"></pager>
+                </td>
+            </tr>
+        </tfoot>
+    </table> 
+    <div class="g-link-r">
+        <p><b>{{paper.name}}</b> 已关联 <b>{{linkItems.length}}</b> 份学案</p>
+        <div class="m-node f-cp" ng-class="node.bd" ng-repeat="node in linkItems" ng-click="unlink_fn(node,$index)">
+            <span>{{node.cot}}&nbsp;&nbsp;</span>
+            <a href="" title="取消关联学案"><span class="icon-unlink"></span></a>
+        </div>
+    </div>          
+</div>

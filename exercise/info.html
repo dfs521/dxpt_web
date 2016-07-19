@@ -1,0 +1,104 @@
+﻿<style>
+    .g-info{position: relative;font-size: 20px;}
+    .g-lv{margin-right: 260px;overflow-y: auto;padding-right: 15px}
+    .g-rv{position: absolute;top: 0px;right: 0px;width: 260px;overflow-y: auto;padding:0 5px;}
+    
+    .m-lv-sub{height:40px;line-height: 40px;margin-top:.5em}
+    .m-sub{height: 40px;line-height: 40px;padding-left: .5em;}
+    .m-rank{position: relative;margin:4px 0;font-size:18px;}
+    .m-rank.act{height:100px;border-right-width:4px;border-right-style:solid;}
+    .m-rank.h2{height:40px;}
+    .m-rank.bgc1{background-color: #ddd;}
+    .m-rank.bgc2{color: #aaa;}
+    .m-rank img{height: 80px;width: 70px;position: absolute;z-index: 2;
+    left:0;top:10px;-webkit-border-radius: 10px;border-radius: 10px;}
+    .gray {-webkit-filter: grayscale(100%);filter: grayscale(100%);filter: gray;} 
+    .m-rank .p3{position: absolute;z-index: 2;left:90px;}
+    .m-rank .p3-l1{top:7px;}
+    .m-rank .p3-l2{top:10px;}
+    .m-rank .index{position: absolute;z-index: 3;left:0;top:15px;width:20px;height:20px;color:white;line-height:20px;font-size:11px;text-align: center;}
+    .m-rank .p3 .min{font-size:16px;color:#7A7A7A;padding:2px 0;}
+    
+    .m-th{font-weight: bold}
+    .m-th>p{display: inline-block;height: 40px;line-height:40px;}
+    .g-info .p1{width: 25%;padding-left: .5em}
+    .g-info .p2{width: 30%;left: 25%;text-align: center}
+    .g-info .p4{width: 22%;left: 55%;text-align: center}
+    .g-info .p5{width: 23%;left: 77%;text-align: center}
+    
+    .m-results>div{position: relative;min-height: 50px;margin: .5em 0;
+    border-left-width: 2px;border-left-style:solid;border-right-width: 2px;border-right-style:solid;background-color: #ddd}
+    .m-results>div>p{position: absolute;top: 0px;height: 100%;line-height: 50px}
+    .m-results .h75{height: 110px;}
+    .m-results .h75>p{line-height: 110px}
+    .m-results .u76{margin:0px}
+    .m-results img{width: 160px;height:110px;-webkit-border-radius: 10px;border-radius: 10px;display: inline-block;padding: 0px 0px 6px 0}
+
+    .m-results .icon-remove{color: red;font-size: 1.5em}
+    .m-results .icon-check{color: green;font-size: 1.5em}
+    .red{color: red;}
+    .green{color: green;}
+    .gray{color: #7A7A7A;}
+</style>
+<div class="g-info">
+    <div class="g-lv">
+        <div class="m-th">
+            <p class='p1'>题型/正确率</p><p class='p2'>解答</p><p class='p4'>得分</p><p class='p5'>对错</p>
+        </div>
+        <div class="m-results" ng-repeat="asi in ASIlist" ng-init="p_index=$index+1">
+            <div ng-if="asi.qid!=76" class="{{asi.bd}}" ng-class="{'h75':asi.qid==75 && asi.myanswer!=''}">
+                <p class="p1">{{$index+1}}.{{asi.qname}} ({{asi.scale}}%)</p>
+                <p class="p2" ng-class="{'gray':asi.myanswer=='','green':asi.result==1,'red':asi.result==2}">
+                    <span ng-if="asi.myanswer==''">
+                        未作答
+                    </span>
+                    <span ng-if="asi.myanswer!='' && asi.qid!=75" ng-class="{'green':asi.result==1,'red':asi.result==2}">
+                        {{asi.myanswer}}
+                    </span>                    
+                    <img ng-if="asi.qid==75 && asi.myanswer!=''" class="f-cp" ng-click="maxImg(asi)" ng-src="{{asi.myanswer}}" />
+                </p>
+                <p class="p4" ng-class="{'gray':asi.myanswer=='','green':asi.result==1,'red':asi.result==2}">{{asi.myscore}}</p>
+                <p class="p5">
+                    <span ng-hide="asi.result==0" ng-class="{'icon-check':asi.result==1,'icon-remove':asi.result==2}"></span>
+                </p>                 
+            </div> 
+            <div class="u76 {{asi.bd}}" ng-repeat="node in asi.nodes" ng-if="asi.qid==76" ng-class="{'h75':node.qid==75 && node.myanswer!=''}">
+                <p class="p1">{{p_index+"."+($index+1)}} {{node.qname}} ({{node.scale}}%)</p>
+                <p class="p2" ng-class="{'gray':node.myanswer=='','green':node.result==1,'red':node.result==2}">
+                    <span ng-if="node.myanswer==''">
+                        未作答
+                    </span>
+                    <span ng-if="node.myanswer!='' && node.qid!=75" ng-class="{'green':node.result==1,'red':node.result==2}">
+                        {{node.myanswer}}
+                    </span>                      
+                    <img ng-if="node.qid==75 && node.myanswer!=''"  class="f-cp" ng-click="maxImg(node)" ng-src="{{node.myanswer}}">
+                </p>
+                <p class="p4"  ng-class="{'gray':node.myanswer=='','green':node.result==1,'red':node.result==2}">{{node.myscore}}</p>
+                <p class="p5">
+                    <span ng-hide="node.result==0" ng-class="{'icon-check':node.result==1,'icon-remove':node.result==2}"></span>
+                </p>
+            </div>                  
+        </div>
+        <p class="m-lv-sub"><b>总得分: <span class="dbfc">{{cot_score}}分</span></b></p>        
+    </div>
+    <div class="g-rv">
+        <p class="m-sub"><b>提交:{{submit_cot}}/{{stuList.length}}</b></p>
+        <div class="m-rank" ng-repeat="stu in stuList" ng-click="getASI(stu)" ng-class="{'act f-cp':stu.is_act,'bgc1 f-cp':stu.is_submit && !stu.is_act,'bgc2':!stu.is_submit,'h2':!stu.is_act}">
+            <p ng-if="stu.is_submit" class="index db">{{$index+1}}</p>
+            <img ng-if="stu.is_act" ng-src="{{stu.head}}" onerror="javascript:this.src='img/tx.jpg';" alt=""/>
+            <div class="p3" ng-class="{'p3-l1':!stu.is_submit || !stu.is_act,'p3-l2':stu.is_submit && stu.is_act}">
+                <p><b>{{stu.stuName}}</b></p>
+                <p ng-if="stu.is_act" class='min'>{{stu.takeTime}}</p>
+                <p ng-if="stu.is_act" class='min'>{{stu.score}} 分</p>
+            </div>
+        </div>        
+    </div>
+</div> 
+
+<div id="imgBox" class="imgBox-close">
+    <div class="menu">
+        <span class="icon-edit" onclick="getClientData(['comment',''],function(){});"></span>
+        <span class="icon-exit" onclick="javascript:FG('#imgBox').className('imgBox-close');"></span>
+    </div>
+    <img id="imgBox_res" src="">
+</div>

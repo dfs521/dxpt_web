@@ -1,0 +1,481 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <base href="http://192.168.0.16:1501/glp/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Editor</title>
+    <link rel="stylesheet" href="v4/css/base.css">
+    <link href="v4/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="v4/css/blue.css">
+    <style type="text/css">
+        body{margin:0px;overflow: hidden;}
+        #myEditor{-webkit-box-sizing:content-box;box-sizing:content-box;}
+    </style>    
+</head>
+<body id="ifm">
+<div id="myEditor"></div>
+
+<script type="text/javascript" src="v4/js/umeditor/third-party/jquery.min.js"></script>
+<script type="text/javascript" src="v4/js/umeditor/umeditor.config.js"></script>
+<script type="text/javascript" src="v4/js/umeditor/umeditor.js"></script>
+<script type="text/javascript" src="v4/js/umeditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="v4/js/front-end.js"></script>
+<script type="text/javascript">
+/**
+ * StageWebViewBridge
+ */
+(function(window)
+{
+    window.StageWebViewBridge = (function()
+    {         
+    /* PROPIERTIES */
+        
+        /* Stores callBack functions */
+        var callBacks = [];
+        
+        /* Stores StageWebViewBridge.ready() functions */
+        var onReadyHandlers = [];
+        
+        /* Stores the extensions parsed with the cache System */
+        var cached_extensions = [];
+        
+        /* Stores the default function called on DOMContentLoaded */ 
+        var DOMContentLoadedCallBack =function(){ return null };
+        
+        /* Stores the default function called on deviceReady */
+        var devicereadyCallBack = function(){};
+        
+        /* Stores the default root path of filesystem */
+        var rootPath = "";
+        
+        /* Stores the documentsDirectory path of filesystem */
+        var docsPath = "";
+        
+        /* Stores the default sourceFolder path of filesystem */
+        var sourcePath = "";
+        
+        /* Stores the regexp used to filter files by extension */
+        var fileRegex;
+        
+        /* Used by the .ready method to store temporally callback function called in fakeEvent Dispathch */
+        var currentReadyHandler;
+        
+        /* Used to determine OS */
+        var checker =
+        {
+          iphone: navigator.userAgent.match(/(iPhone|iPod|iPad)/) === null ? false:true,
+          android: navigator.userAgent.match(/Android/) === null ? false: navigator.platform.match(/Linux/) == null ? false:true
+        };      
+        
+        /* Used to determine if the paths has been initialized */
+        var pathsReady = false;
+        
+        /* Used to determine last time call to AS3 was made */
+        var lastCallTime = new Date().getTime();
+        
+        /* Used to determine the delay between calls to AS3 */
+        var aggregatedCallDelay = 0;
+        
+        /* Used to determine the minimun consecutive delay between calls to AS3 */
+        /* AT YOUR RISK!!!!! Use StageWebViewBridge.setCallDelay( ms ), to change the default value. */
+        var defaultCallDelay = 500;
+        
+        /* Used to determine the "protocol" to do the comm with AS3 */
+        var sendingProtocol = checker.iphone ? 'about:':'tuoba:';       
+
+    /* METHODS */   
+        
+        /* Used internally to parse call funcions from AS3 */
+        var doCall = function( jsonArgs )
+        {
+            setTimeout(function() { deferredDoCall(jsonArgs); },0 );
+        };
+        
+        /* Used internally to parse call funcions from AS3 */
+        var deferredDoCall = function( jsonArgs )
+        {
+            //var _serializeObject = JSON.parse( atob( jsonArgs ) );
+            var _serializeObject = JSON.parse( decodeURIComponent(escape(atob( jsonArgs ))) );
+            var method = _serializeObject.method;
+            var returnValue = true;
+            if( method.indexOf('[SWVMethod]')==-1 )
+            {           
+                var targetFunction;
+                if( method.indexOf('.')==-1)
+                {
+                    targetFunction = window[ method ];
+                }
+                else
+                {
+                    var splitedPath = method.split('.');
+                    targetFunction=window;
+                    for( var i=0; i<splitedPath.length; i++ )
+                    {
+                        targetFunction = targetFunction[ splitedPath[ i ] ];
+                    };
+                };
+                returnValue = targetFunction.apply(null, _serializeObject.arguments );
+            }
+            else
+            {
+                var targetFunction = callBacks[ method ];
+                returnValue = targetFunction.apply(null, _serializeObject.arguments );
+            };
+
+            if( _serializeObject.callBack !=undefined  )
+            {   
+                call( _serializeObject.callBack, null, returnValue );       
+            };                          
+        };
+        
+        /* Used to call an AS3 function. */
+        /* Usage: StageWebViewBridge.call( 'as3FunctionToCall', jsCallBack, ...restParams ) */
+        var call = function( )
+        {
+            
+            aggregatedCallDelay = ( new Date().getTime()  - lastCallTime < defaultCallDelay ) ? aggregatedCallDelay+defaultCallDelay:0;
+            
+            var argumentsArray = [];
+            var _serializeObject = {};
+                _serializeObject.method = arguments[ 0 ];
+            if( arguments[ 1 ] !=null ) _serializeObject.callBack = '[SWVMethod]'+arguments[ 0 ];
+
+            if( arguments.length>2)
+            {
+                for (var i = 2; i < arguments.length; i++)
+                {
+                    argumentsArray.push( arguments[ i ] );
+                };
+            };
+
+            _serializeObject.arguments = argumentsArray;
+            if( _serializeObject.callBack !=undefined ) { addCallback('[SWVMethod]'+arguments[ 0 ], arguments[ 1 ] ); };          
+             //if(navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)){
+                setTimeout( function(){ 
+                    window.location.href=sendingProtocol+'[SWVData]'+btoa(unescape(encodeURIComponent( JSON.stringify( _serializeObject ) )));
+                },aggregatedCallDelay );
+             //};
+            lastCallTime = new Date().getTime();
+            
+        };
+
+        /* Used to change the defaultCallDelay value. */
+        var setCallDelay = function( ms )
+        {
+            defaultCallDelay = ms;
+        };
+        
+        
+        /* Used internally to store callback functions for call methods */
+        var addCallback = function( name, fn )
+        {
+            callBacks[ name ] = fn;
+        };
+        
+        /* Use it to get the path to a file from JS */
+        var getFilePath = function( fileName )
+        {
+            if( !pathsReady )
+            {
+                throw "StageWebViewBridge.getFilePath('"+fileName+"').Paths still not set. Listen to document.deviceready event before access this method.";
+            }
+            else
+            {   
+                if( fileName.indexOf('jsfile:') !=-1 )
+                {   
+                    if( fileRegex.exec(fileName) != null )
+                    {
+                        return rootPath+'/'+fileName.split('jsfile:/')[1];
+                    }
+                    else
+                    {
+                        return sourcePath+'/'+fileName.split('jsfile:/')[1];
+                    };
+                };
+                if( fileName.indexOf('jsdocfile:') !=-1 )
+                {   
+                    return docsPath+'/'+fileName.split('jsdocfile:/')[1];
+                };
+            }
+        };
+        /* fakeEventDispatcher */
+        var dispatchFakeEvent = function( name )
+        {
+            var fakeEvent = document.createEvent("UIEvents");
+            fakeEvent.initEvent( name , false,false );
+            document.dispatchEvent(fakeEvent);
+        };      
+        
+        /*[Event("ready")]*/
+        var ready = function( handler )
+        {
+            onReadyHandlers.push( handler );
+        };
+        
+        /* Fired on DOMContentLoaded */
+        var onReady = function( )
+        {
+            document.addEventListener('SWVBReady', function()
+            {
+                currentReadyHandler();
+            }, false );
+    
+            for (var i=0; i<onReadyHandlers.length; i++)
+            {
+                currentReadyHandler = onReadyHandlers[ i ];
+                dispatchFakeEvent("SWVBReady");
+            };
+        
+        };
+        
+        /* Called from AS3 on loadComplete. */
+        var onGetFilePaths = function( data )
+        {          
+            document.title = new Date().getTime();
+            sourcePath = data.sourcePath;
+            rootPath = data.rootPath;
+            docsPath = data.docsPath;
+            cached_extensions =  data.extensions;
+            fileRegex =new RegExp(( "\(jsfile:\/\)\(\[\\w\-\\\.\\\/%\]\+\("+cached_extensions.join('\|')+"\)\)" ),"gim");
+            pathsReady = true;
+            devicereadyCallBack();
+            setTimeout( function(){ call('___onDeviceReady'); }, 1);
+        };
+        
+        /* Assign a callback function that executes the on deviceready */
+        var deviceReady = function( fn )
+        {
+            devicereadyCallBack = fn;
+        };
+        
+        /* Assign a callback function that returns an object to the DOMContentLoaded event */
+        var domLoaded = function( fn )
+        {
+            DOMContentLoadedCallBack = fn;
+        };
+        
+        /* Call AS3 to fire StageWebViewBridgeEvent.DOM_LOADED */
+        var callDOMContentLoaded = function()
+        {          
+            document.removeEventListener( 'DOMContentLoaded', callDOMContentLoaded, false );
+            call( '___onDomReady', onReady,  DOMContentLoadedCallBack() );
+        };
+        
+        /* Fired on page load complete */
+        var loadComplete = function()
+        {
+            document.removeEventListener('load', loadComplete, false );
+            call('___getFilePaths', onGetFilePaths );       
+        };
+        
+        /* Listen for page load complete */
+        window.addEventListener( 'load', loadComplete, false );
+        
+        /* Listen for DOMContentLoaded */
+        document.addEventListener('DOMContentLoaded', callDOMContentLoaded, false );
+        
+        /* Return public methods */
+        return {
+            doCall: doCall,
+            call: call,
+            getFilePath:getFilePath,
+            ready:ready,
+            deviceReady:deviceReady,
+            domLoaded:domLoaded,
+            setCallDelay:setCallDelay
+        };
+    })();
+})(window);
+    var baseUrl="http://"+window.location.host+"/glp/";
+    var service_baseUrl="res/comn/downResFile.action?";
+    
+    //调取客户端
+    var getClientData=function(e,v){
+        if(typeof getParam === 'function'){
+            var temp=false;     
+            var tamp=getParam(e[0],e[1]);
+            if (temp) {v(temp);}
+        }else{
+            oth.stArr.swvb=true;
+            StageWebViewBridge.call('getParam',function(data){
+                oth.stArr.swvb=false;
+                v(data);
+            },e[0],e[1]);
+        }    
+    }
+
+    //客户端调取
+    var postTag=function(e){  
+        switch(e.type){                  
+         case "imglist":
+            setImg(e.data);
+            break;                        
+         case "get_cot":
+            Getcot();
+            break;
+         case "set_cot":
+            Setcot(e.data);
+            break;
+         case "uploadlist":
+            setTag(e.data);
+            break;
+        }
+    } 
+
+    //判断工具栏是否需要换行
+    if (window.innerWidth<759) {
+        FG("#myEditor").css("height",(window.innerHeight-80)+"px");
+    }else{
+        FG("#myEditor").css("height",(window.innerHeight-48)+"px");
+
+    }
+    FG("#myEditor").css("width",(window.innerWidth-4)+"px");
+
+    //注册自定义按钮
+    if (!is_min) {
+        UM.registerUI('up_img',function(name) {
+                var me = this;
+                var $btn = $.eduibutton({
+                    icon : name,
+                    click : function(){
+                        getClientData(["upload","P"]);
+                    },
+                    title: '上传图片'
+                });
+                return $btn;
+            }
+        );
+
+        UM.registerUI('up_sound',function(name) {
+                var me = this;
+                var $btn = $.eduibutton({
+                    icon : name,
+                    click : function(){
+                        getClientData(["upload","A"]);
+                    },
+                    title: '上传音频'
+                });
+                return $btn;
+            }
+        );
+        UM.registerUI('up_video',function(name) {
+                var me = this;
+                var $btn = $.eduibutton({
+                    icon : name,
+                    click : function(){
+                        getClientData(["upload","V"]);
+                    },
+                    title: '上传视频'
+                });
+                return $btn;
+            }
+        );  
+        UM.registerUI('look',function(name) {
+                var me = this;
+                var $btn = $.eduibutton({
+                    icon : name,
+                    click : function(){
+                        getClientData(["look",""]);
+                    },
+                    title: '查看资源'
+                });
+                return $btn;
+            }
+        );            
+    }
+
+    var um = UM.getEditor('myEditor');
+    if (!is_min) {um.execCommand('fontsize',"20px");}
+    um.execCommand('fontfamily','微软雅黑');
+
+    function setDisabled() {
+        um.setDisabled('fullscreen');
+    }
+
+    function setEnabled() {
+        um.setEnabled();
+    }
+
+    um.addListener('contentchange',function() {
+        if (um.queryCommandState('source')==1) {
+            FG("#ifm textarea").css("height",FG("#myEditor").height()-4+"px");
+            return;            
+        }else if(FG("#myEditor img").length==0){return;}
+        
+        var imageList=[];
+        FG("img[src^='file']").each(function(d){
+            var new_src=d.src.substring(8),
+            new_id=oth.Guid();
+            d.id=new_id;
+            d.src="v4/img/load.gif";
+            imageList.push({gId:d.id,type:"image",url:new_src});
+        });
+
+        FG("img[src^='${default}']").each(function(d){
+            var new_src=d.src.substring(baseUrl.length+10);
+            d.src=new_src;
+        });
+
+        if (imageList.length==0) {return;}
+        getClientData(["tag",imageList]);
+    });
+
+    function setImg(e){
+        for (var i = 0; i < e.length; i++) {
+            FG("#"+e[i].gId).attr("src",service_baseUrl+"rid="+e[i].rid+"&type=2");
+        }
+    }
+
+    function Getcot(){    
+        RemoverKG();    
+        getClientData(["get_cot",um.getContent()]);
+    }
+
+    function RemoverKG(){
+        if(FG("#myEditor>p:last-child").text()==""){
+            FG("#myEditor>p:last-child").remove();
+        }
+    }
+
+    function Setcot(e){
+        FG("#myEditor").html("");
+        um.execCommand('insertHtml', e);
+    }
+
+    //设置回传的音频、视频和图片
+    function setTag(e){
+        for (var i = 0; i < e.length; i++) {
+            var ico=null;
+            var temp=null;
+            if (e[i].type=="V") {
+                ico="icon-play";
+                temp='<p contenteditable="false" class="f-AV" onclick="window.parent.getClientData([\'play\',{id:\''+e[i].id+'\',type:\''+e[i].type+'\'}])">';  
+                temp+='<span class="s1">'+e[i].filename+'</span>';
+                temp+='&nbsp;&nbsp;<span class="'+ico+'"></span></p><p style="height:10px"></p>';                                 
+            }
+            else if(e[i].type=="A"){
+                ico="icon-headphones";             
+                temp='<p contenteditable="false" class="f-AV" onclick="musicPS(\''+e[i].id+'\',\''+e[i].type+'\')">';
+                temp+='<span class="s1">'+e[i].filename+'</span>';
+                temp+='&nbsp;&nbsp;<span class="'+ico+'"></span></p><p style="height:10px"></p>';
+            }
+            else if(e[i].type=="E"){
+                ico="icon-play";
+                temp='<p contenteditable="false" class="f-AV" onclick="window.parent.getClientData([\'play\',{id:\'0000d33326926ddb47639aa14981773d7fbd\',type:\''+e[i].type+'\'}])">';  
+                temp+='<span class="s1">'+e[i].filename+'</span>';
+                temp+='&nbsp;&nbsp;<span class="'+ico+'"></span></p><p style="height:10px"></p>';
+            }else{
+                temp="<img alt='' style='width:300;height:200px' src='"+service_baseUrl+"type=2&rid="+e[i].id+"'/>"
+            }
+            um.execCommand('insertHtml', temp);
+        }
+    }   
+</script>
+
+</body>
+</html>
+
+
+
+

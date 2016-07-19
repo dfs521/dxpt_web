@@ -1,0 +1,53 @@
+﻿<link rel="stylesheet" href="v4/css/swiper.min.css">
+<style>
+    #m-bd {position: relative;background-image: url('img/bg3.jpg');background-size: cover;}
+    #m-bd>div{overflow: hidden;margin:0 auto;z-index:1;}
+    .gallery-thumbs {height: 10%;box-sizing: border-box;padding: 10px 0;background-color: rgba(255,255,255,.8);}
+    .gallery-thumbs .swiper-slide{height: 100%;opacity: 0.3;text-indent: 10px;color: #868686}
+    .gallery-thumbs .swiper-slide-active {opacity: 1;}
+
+    .gallery-top {height: 90%;width: 100%;background-color: rgba(255,255,255,.9);}
+    .gallery-top .swiper-slide {padding: 10px;overflow-y: auto;}
+
+    .gallery-thumbs .swiper-slide h1{background: -webkit-linear-gradient(top,#298CE1,#333); -webkit-text-fill-color: transparent; -webkit-background-clip: text;}
+    
+    #g-music{position:fixed;opacity: 0;bottom: 0;left: 0px;width: 120px;height: 120px;z-index: 2;-webkit-transition: opacity .5s;transition:opacity .5s;cursor: pointer;}
+    #g-music.start{opacity: 1;}
+
+    .m-music-v1{position: relative;height: 100%;}
+    .m-music-v1>div{position: absolute;height: 100%;width: 100%;text-align: center;}
+    #u-music-bg{-webkit-border-radius: 60px;border-radius: 60px;background-image: url('img/music_bg.jpg');text-align: center;-webkit-animation:music 5s linear infinite;animation:music 5s linear infinite;position: absolute;z-index: 1;}
+    #u-music-bg.paused{-webkit-animation-play-state:paused;animation-play-state:paused;}
+    #u-music-bg.running{-webkit-animation-play-state:running;animation-play-state:running;}
+
+    .u-musicv1-v2{z-index: 2;}
+    .u-musicv1-v2>span{color: white;font-size:40px;line-height: 120px;}
+     
+    @-webkit-keyframes music
+    {
+        0%   {-webkit-transform: rotate(0deg);}
+        100% {-webkit-transform: rotate(360deg);}
+    }     
+    @keyframes music
+    {
+        0%   {transform: rotate(0deg);}
+        100% {transform: rotate(360deg);}
+    }
+
+</style>
+<div id="m-bd">
+    <div class="gallery-thumbs">
+        <div class="swiper-wrapper" id='sw-nav'></div>
+    </div>  
+    <div class="gallery-top">
+        <div class="swiper-wrapper" id='sw-cot'></div>
+    </div>  
+</div>
+<div id="g-music" ng-click="stopFn()">
+    <div class="m-music-v1">
+        <div id="u-music-bg" class="paused"></div>
+        <div class="u-musicv1-v2">
+            <span id="u-music-icon" class="icon-play2"></span>
+        </div>
+    </div>
+</div>

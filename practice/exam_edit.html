@@ -1,0 +1,87 @@
+﻿<style>
+    .g-l-r{height: 100%;}
+    .g-lv{width: 400px;padding-right: 1em}
+    .g-rv{margin-left: 400px;}
+    iframe{border: 0;margin: 0;width: 98%;height: 320px;}
+    textarea{width: 90%;}
+    b{font-size: 16px;}
+
+    .m-exam{margin-top:1em;width: 90%}
+    .m-exam>div{margin-bottom: 1em}
+    .m-exam>div>p{margin-bottom: .3em}
+    .m-exam .v1>p{position: relative;}
+    .m-exam .v1 .icon-times-circle{font-size: 2em;position: absolute;top: 1em;right: 0;}
+
+    .p-radio>span{height:30px;line-height:30px;}
+    .m-exam .v2 .p-radio:first-child>span{width: 62px;}
+    .m-exam .v2 .p-radio:last-child>span{margin-right: 10px;border-radius:15px;-webkit-border-radius: 15px;}
+    .m-exam .v3-u1{width: 150px;position: relative;}
+    .m-exam .v3-u1 .icon-ellipsis-h{position:absolute;bottom: 0;left: 70px}
+    .m-exam .v3-u2{height: 0px;overflow: hidden;transition: height .5s;-webkit-transition: height .5s;}
+    .m-exam .v3-u2_hide{height: 0px;}
+    .m-exam .v3-u2_show{height:72px;}
+    .m-exam .v4{height:1px;}
+
+    .m-add{font-size: 2em;text-align: right;width: 96%}
+</style>
+<div class="g-l-r" id="v_scroll">
+    <div class="g-lv">
+        <p class="f-cp" ng-click='change_JC()'><b>{{bookName}}&nbsp;&nbsp;<span class="icon-exchange g-fc4-h"></span></b></p>
+        <ul class="tree">
+            <li ng-repeat="item in items">
+                <p ng-class="{'tt-at':item.is_ttat}" ng-click="item_fn(item)">
+                    &nbsp;&nbsp;
+                    <span ng-class="{true:'icon-angle-down',false:'icon-angle-right'}[item.is_ttat]">
+                    </span>
+                    &nbsp;&nbsp;{{item.ttname}}
+                </p>
+                <div id="{{item.id}}">
+                    <p ng-click="row_fn(row)" ng-repeat="row in item.rows" ng-class="{'active':row.is_rowat}" repeat-done="rpdone_fn()">
+                        <span class="icon-price-tag"></span>&nbsp;{{row.rowname}}
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="g-rv">
+        <iframe name="fn" id="fn" cus="min" src="v4/editor/editor.html"></iframe>
+        <div class="m-exam" ng-repeat="item in my_exam">
+            <div class="v1">
+                <p><b><span ng-show="my_exam.length>1?true:false">{{$index+1}}.</span>题型</b><span ng-show="$index>0?true:false" ng-click="del_exam($index)" class="icon-times-circle g-fc4-h f-cp"></span></p>
+                <div class="p-radio">
+                    <span ng-click="sel_qtype(row,item)" ng-class="{true:'s-bg',false:'sp-lose'}[row.is_at]" ng-repeat="row in item.qtype">{{row.qname}}</span>
+                </div>
+            </div>
+            <div class="v2">
+                <p><b>标准答案</b></p>
+                <div class="p-radio" ng-if="item.qid==70">
+                    <span ng-click="sel_radio(answer,item)" ng-class="{true:'s-bg',false:'sp-lose'}[answer.is_at]" ng-repeat="answer in item.qanswer">{{answer.name}}</span>&nbsp;
+                </div>
+                <div class="p-radio" ng-if="item.qid==71">
+                    <span ng-click="sel_checkbox(answer,item)" ng-class="{true:'s-bg',false:'sp-lose'}[answer.is_at]" ng-repeat="answer in item.qanswer">{{answer.name}}</span>&nbsp;
+                </div>    
+                <div class="p-radio" ng-if="item.qid==72">
+                    <span ng-click="sel_radio(answer,item)" ng-class="{true:'s-bg',false:'sp-lose'}[answer.is_at]" ng-repeat="answer in item.qanswer">{{answer.name=='1'?'正确':'错误'}}</span>&nbsp;
+                </div>
+                <div ng-if="item.qid==75">
+                    <textarea maxlength="1000" placeholder="请输入标准答案" cols="30" rows="3" ng-model="item.answer"></textarea>
+                </div>                                                 
+            </div>
+            <div class="v3">
+                <p class="f-cp v3-u1" ng-click="analysis_fn(item)">
+                    <b>试题解析</b>&nbsp;&nbsp;<span ng-show="!item.is_analysis" class="icon-ellipsis-h"></span>
+                </p>
+                <p class="v3-u2" ng-class="{true:'v3-u2_show',false:'v3-u2_hide'}[item.is_analysis]">
+                    <textarea maxlength="2000" placeholder="请输入试题解析" cols="30" rows="3" ng-model="item.analysis"></textarea>
+                </p>
+            </div>
+            <div class="v4 bg-h" ng-show="my_exam.length>1?true:false"></div>
+        </div>
+        <div class="m-add" ng-hide="(my_exam.length==1 && is_edit?true:false) || (my_exam.length==6)">
+            <span ng-click="create_item()" class="icon-plus-circle g-fc4-h f-cp"></span>
+        </div>        
+        <p class="m-bottom">
+            <button class="bg1-h" ng-disabled="but_dis" ng-click="save_fn()"><span class="icon-save"></span>&nbsp;&nbsp;保 存</button>
+        </p>
+    </div>
+</div> 

@@ -1,0 +1,43 @@
+﻿<style>
+    .dlg-bd{cursor: default;min-height: 500px;padding:.5em 1em}
+
+    .dlg-va{position: relative;height: 25px}
+    .dlg-va>p{position: absolute;left: 0;}
+    .dlg-va .p1{font-size: 1.2em;z-index: 2;top:0;padding-right: .2em;background-color: white}
+    .dlg-va .p2{z-index: 1;height: 1px;top:15px;width: 100%;background-color: #ddd}
+
+    .dlg-vb{margin-bottom: 1em;padding-left: 1em}
+
+    .dlg-bd>table{width: 100%}
+    .dlg-bd>table td{padding: .6em}
+    .dlg-bd .td1{width: 30%}
+    .dlg-bd .td2{width: 60%;text-align: right}
+    .dlg-bd .td2>input{text-align: center;width: 50px;}
+
+    .ngdialog.ngdialog-theme-default .ngdialog-content{width: 600px;}
+
+</style>
+<div class="dlg-tt g-bc5"><span class="icon-inbox clr"></span>&nbsp;&nbsp;设置子题目分数</div>
+<div class="dlg-bd">
+    <div class="dlg-va">
+        <p class="p1"><b>题干</b></p>
+        <p class="p2"></p>
+    </div>
+    <div class="dlg-vb" ng-bind-html="tt"></div>
+
+    <div class="dlg-va">
+        <p class="p1"><b>小题分值</b></p>
+        <p class="p2"></p>
+    </div>
+    <table>
+        <tr ng-repeat="row in rows">
+            <td>{{$index+1}}</td>
+            <td class="td1">{{row.q_name}}</td>
+            <td class="td2">
+                <button class="bg1-h" ng-click="modified(row,false)"><span class="icon-minus"></span></button>
+                <input maxlength="4" ng-blur=blur_fn(row) type="text" class="def-txt" ng-model="row.q_score">
+                <button class="bg1-h" ng-click="modified(row,true)"><span class="icon-plus"></span></button>
+            </td>
+        </tr>
+    </table>  
+</div>

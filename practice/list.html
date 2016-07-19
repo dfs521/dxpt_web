@@ -1,0 +1,39 @@
+﻿<style>
+    .m-sch{text-align: right;margin-bottom: .5em}
+</style>
+<div class="m-sch">
+    <div>
+        <input type="text" class="def-txt2 w300"  maxlength="20" ng-model="myval" ng-keydown="keyDownFn($event)" placeholder="练习名称"><button class="bg1-h" ng-click="sel()" ><span class="icon-search f-cp"></span>&nbsp;查 询</button>
+    </div>
+</div>
+<table class="m-tb">
+    <thead>
+        <tr>
+            <th>练习名称</th><th>最后修改时间</th>
+            <th>题量</th><th>分值</th><th>关联学案数</th><th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in items">
+            <td>{{item.name}}</td>
+            <td>{{item.updtime}}</td>
+            <td>{{item.qNumber}}</td>
+            <td>{{item.score}}</td>
+            <td>{{item.linkNumber}}</td>
+            <td>
+                <a href="" title="查看" ng-click="link_fn(item,'practice.view_paper')"><span class="icon-eye"></span></a>
+                &nbsp;&nbsp;
+                <a href="" title="关联学案" ng-click="link_fn(item,'practice.linklschema')"><span class="icon-link2"></span></a>
+                &nbsp;&nbsp; 
+                <a href="" title="删除" ng-click="del_fn(item)"><span class="icon-trash"></span></a>                
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                <pager record-count="recordCount" page-count="pageCount" current-page="currentPage" on-page-change="onPageChange()"></pager>
+            </td>
+        </tr>
+    </tfoot>
+</table>   

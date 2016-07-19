@@ -1,0 +1,38 @@
+﻿<style>
+    .m-tit{text-align: center;}
+    .m-tit>p:first-child{font-size: 1.5em}
+    .m-tit>p:last-child{color: gray}
+
+    .m-item{margin-bottom: 1em;padding:0px 1em 1em 0;margin:1em 1.5em;background-color: #F3F3F3;box-shadow: 0px 0px 10px #E0E0E0;padding-top:1em}
+    .m-item-tt{color: white;padding:.2em 1em;width:116px;}
+
+    .m-item .v1{padding-left: 2em;padding-top:1em}
+    .m-item .v2{padding-left: 2em;padding-top: 1em;font-size: 1.1em}
+    .m-item .v2>div{padding-bottom: .5em}
+    .m-item .v2 p:nth-child(n+1){padding-bottom: .3em}
+    .m-item .u-score{font-size: 12px}
+    .m-item .u-score2{color: gray;font-size: 12px}
+</style>
+<div class="m-tit">
+    <p><b>{{myPaper.name}}</b></p>
+    <p>(共 <b>{{myPaper.qNumber}}</b> 题，总分 <b>{{myPaper.score}}</b> 分)</p>
+</div>
+
+<div class="m-item" ng-repeat="item in items" ng-init="p_index=$index+1">
+    <div class="m-item-tt" ng-class="item.bg"><b>{{$index+1}}.{{item.qname}}</b><span ng-show="myPaper.score>0" class="u-score"> ({{item.score}}分)</span></div>
+    <div class="v1" ng-bind-html="item.cot"></div>
+    <div class="v2" ng-show="item.nodes.length==0">
+        <div>
+            <p><b>答案:</b>&nbsp;&nbsp;{{item.answer}}</p>
+            <p><b>解析:</b>&nbsp;&nbsp;{{item.analysis}}</p>                    
+        </div>
+    </div>
+    <div class="v2" ng-show="item.nodes.length>0">
+        <div ng-repeat="node in item.nodes">
+            <p><b>{{p_index+"."+($index+1)}} </b>{{node.qname}}<span ng-show="myPaper.score>0" class="u-score2"> ({{node.score}}分)</span></p>
+            <p><b>答案:</b>&nbsp;&nbsp;{{node.answer}}</p>
+            <p><b>解析:</b>&nbsp;&nbsp;{{node.analysis}}</p>
+        </div>
+    </div>        
+</div>
+

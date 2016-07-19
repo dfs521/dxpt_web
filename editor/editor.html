@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <base href="http://192.168.0.16:1501/glp/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Editor</title>
+    <link href="v4/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="v4/css/base.css">
+    <link rel="stylesheet" href="v4/css/blue.css">  
+    <style type="text/css">
+        body{margin:0px;overflow: hidden;}
+        #myEditor{-webkit-box-sizing:content-box;box-sizing:content-box;}
+    </style>    
+</head>
+<body id="ifm">
+<div id="myEditor"></div>
+
+<script type="text/javascript" src="v4/js/umeditor/third-party/jquery.min.js"></script>
+<script type="text/javascript" src="v4/js/umeditor/umeditor.config.js"></script>
+<script type="text/javascript" src="v4/js/umeditor/umeditor.js"></script>
+<script type="text/javascript" src="v4/js/umeditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="v4/js/front-end.js"></script>
+<script type="text/javascript">
+
+    var service_baseUrl="res/comn/downResFile.action?";
+
+    //判断工具栏是否需要换行
+    if (window.innerWidth<759) {
+        FG("#myEditor").css("height",(window.innerHeight-80)+"px");
+    }else{
+        FG("#myEditor").css("height",(window.innerHeight-48)+"px");
+
+    }
+    FG("#myEditor").css("width",(window.innerWidth-4)+"px");
+
+    //注册自定义按钮
+    if (!is_min) {
+        UM.registerUI('look',function(name) {
+                var me = this;
+                var $btn = $.eduibutton({
+                    icon : name,
+                    click : function(){
+                        window.parent.getClientData(["look",""]);
+                    },
+                    title: '查看资源'
+                });
+                return $btn;
+            }
+        );            
+    }
+    var um = UM.getEditor('myEditor');
+    um.execCommand('fontfamily','微软雅黑');
+    um.execCommand('fontsize',"18px");
+
+    um.addListener('contentchange',function() {
+        if (um.queryCommandState('source')==1) {
+            FG("#ifm textarea").css("height",FG("#myEditor").height()-4+"px");
+            return;            
+        }else if(FG("#myEditor img").length==0){return;}
+        
+        var imageList=[];
+        FG("img[src^='file']").each(function(d){
+            var new_src=d.src.substring(8),
+            new_id=oth.Guid();
+            d.id=new_id;
+            d.src="v4/img/load.gif";
+            imageList.push({gId:d.id,type:"image",url:new_src});
+        });
+
+        FG("img[src^='${default}']").each(function(d){
+            var new_src=d.src.substring(baseUrl.length+10);
+            d.src=new_src;
+        });
+        if (imageList.length==0) {return;}
+        window.parent.getClientData(["tag",imageList]);
+    });
+
+    function setImg(e){
+        for (var i = 0; i < e.length; i++) {
+            FG("#"+e[i].gId).attr("src",service_baseUrl+"rid="+e[i].rid+"&type=2");
+        }
+    }
+
+    function Getcot(){
+        RemoverKG();
+        window.parent.getClientData(["get_cot",um.getContent()]);
+    }
+    function Setcot(e){
+        FG("#myEditor").html("");
+        um.execCommand('insertHtml', e);
+    }
+
+    function RemoverKG(){
+        if(FG("#myEditor>p:last-child").text()==""){
+            FG("#myEditor>p:last-child").remove();
+        }
+    }
+
+    //设置回传的音频、视频和图片
+    function setTag(e){
+        for (var i = 0; i < e.length; i++) {
+            var ico=null;
+            var temp=null;
+            if (e[i].type=="V") {
+                ico="icon-play";
+                temp='<p contenteditable="false" class="f-AV" onclick="window.parent.getClientData([\'play\',{id:\''+e[i].id+'\',type:\''+e[i].type+'\'}])">';  
+                temp+='<span class="s1">'+e[i].filename+'</span>';
+                temp+='&nbsp;&nbsp;<span class="'+ico+'"></span></p><p style="height:10px"></p>';                                 
+            }
+            else if(e[i].type=="A"){
+                ico="icon-headphones";             
+                temp='<p contenteditable="false" class="f-AV" onclick="musicPS(\''+e[i].id+'\',\''+e[i].type+'\')">';
+                temp+='<span class="s1">'+e[i].filename+'</span>';
+                temp+='&nbsp;&nbsp;<span class="'+ico+'"></span></p><p style="height:10px"></p>';
+            }
+            else if(e[i].type=="E"){
+                ico="icon-play";
+                temp='<p contenteditable="false" class="f-AV" onclick="window.parent.getClientData([\'play\',{id:\'0000d33326926ddb47639aa14981773d7fbd\',type:\''+e[i].type+'\'}])">';  
+                temp+='<span class="s1">'+e[i].filename+'</span>';
+                temp+='&nbsp;&nbsp;<span class="'+ico+'"></span></p><p style="height:10px"></p>';
+            }else{
+                temp="<img alt='' src='"+service_baseUrl+"type=2&rid="+e[i].id+"'/>"
+            }
+            um.execCommand('insertHtml', temp);
+        }
+    }  
+</script>
+
+</body>
+</html>
+
+
+
+

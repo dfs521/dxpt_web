@@ -1,0 +1,15 @@
+﻿<style>
+    #chartv,.g-botv{font-size: 20px;}
+    .g-botv{overflow-x: auto;height: 100px;overflow-y: hidden;white-space:nowrap;}
+
+    .m-stu{width: 80px;height: 80px;line-height: 80px;color: white;text-align: center;margin:0 3px 0 0;display: inline-block;overflow: hidden}
+    .m-stu.bgc1{background-color: #7a7a7a;}
+    .m-stu.bgc2{color: #aaa;}
+
+</style>
+<div id="chartv"></div>
+<div class="g-botv">
+    <p class="m-stu" ng-repeat="stu in stuList" ng-click="stuFn(stu)" 
+    ng-class="{'act':stu.is_act,'bgc1 f-cp':stu.is_submit && !stu.is_act,'bgc2':!stu.is_submit}">{{stu.stuName}}</p>
+</div>
+

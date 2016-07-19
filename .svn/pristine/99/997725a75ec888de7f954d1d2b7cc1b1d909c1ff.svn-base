@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn" ng-app='glp'>
+  <head>
+    <base href="http://192.168.0.16:1501/glp/">      
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=4.0,initial-scale=1.0,user-scalable=yes" /> 
+    <title></title>
+    <link rel="stylesheet" href="v4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="v4/css/base.css">
+    <link rel="stylesheet" href="v4/css/blue.css">          
+    <style>
+        #main{overflow: hidden;}
+    </style>
+</head>
+<body id="main">
+<div id="view" ui-view></div>
+<script type="text/javascript" src="v4/js/angular.min.js"></script>
+<script type="text/javascript" src="v4/js/front-end.js"></script>
+<script type="text/javascript" src="v4/js/base_service.js"></script>
+<script type="text/javascript" src="v4/js/controller.js"></script>
+
+<script type="text/javascript">
+    app.config(function($stateProvider,$urlRouterProvider){
+        $urlRouterProvider.otherwise('404');
+        $stateProvider
+        .state('def', {url: "",templateUrl: "v4/def.html",controller:'def'})
+
+        //编辑器
+        .state('editor', {url: "/editor",templateUrl: "v4/editor/def.html",controller:'editor_def'})
+        
+        //练习-PC
+        .state('practice', {url: "/practice",templateUrl: "v4/practice/def.html",controller:'practice_def'})
+        .state('practice.add', {url: "/add",templateUrl: "v4/practice/add.html",controller: "practice_add"})
+        .state('practice.linklschema', {url: "/linklschema",templateUrl: "v4/practice/linklschema.html",controller: "practice_linklschema"})
+        .state('practice.view_paper', {url: "/view_paper",templateUrl: "v4/practice/view_paper.html",controller: "practice_view_paper"})        
+        .state('practice.bulid', {url: "/bulid/:param",templateUrl: "v4/practice/bulid.html",controller: "practice_bulid"})         
+        .state('practice.list', {url: "/list",templateUrl: "v4/practice/list.html",controller: "practice_list"})
+        .state('practice.manage', {url: "/manage",templateUrl: "v4/practice/manage.html",controller: "practice_manage"})
+        .state('practice.exam_edit', {url: "/exam_edit",templateUrl: "v4/practice/exam_edit.html",controller: "practice_exam_edit"})
+
+        //学案
+        .state('learning', {url: "/learning",templateUrl: "v4/unique/learning.html",controller:'learning'})
+
+        //探究主题
+        .state('show', {url: "/show",templateUrl: "v4/unique/show.html",controller:'show'})
+
+        //试卷列表-android
+        .state('paperlist', {url: "/paperlist",templateUrl: "v4/unique/paperlist.html",controller:'paperlist'})
+
+        //练习-教师-android
+        .state('exercise', {url: "/exercise",templateUrl: "v4/exercise/def.html",controller:'exercise_def'})
+        .state('exercise.home', {url: "/home",templateUrl: "v4/exercise/home.html",controller:'exercise_home'})
+        .state('exercise.statistics', {url: "/statistics",templateUrl: "v4/exercise/statistics.html",controller:'exercise_statistics'})
+        .state('exercise.info', {url: "/info",templateUrl: "v4/exercise/info.html",controller:'exercise_info'})
+        .state('exercise.rank', {url: "/rank",templateUrl: "v4/exercise/rank.html",controller:'exercise_rank'})
+
+        //作答-学生-android
+        .state('answering', {url: "/answering",templateUrl: "v4/unique/answering.html",controller:'answering'})
+        
+        //表扬批评-android
+        .state('teacherPraise', {url: "/teacherPraise",templateUrl: "v4/unique/teacherPraise.html",controller:'teacherPraise'});
+    });
+
+    //调取客户端
+    var getClientData=function(e,v){
+        if(typeof getParam === 'function'){
+            var temp=false;     
+            var tamp=getParam(e[0],e[1]);
+            if (temp) {v(temp);}
+        }else{
+            oth.stArr.swvb=true;
+            StageWebViewBridge.call('getParam',function(data){
+                oth.stArr.swvb=false;
+                v(data);
+            },e[0],e[1]);
+        }    
+    }
+
+    //客户端调取
+    var postTag=function(e){  
+        switch(e.type){
+         case "setExamImg":
+            if(e.data!=""){
+                oth.stArr.exam75_obj.myanswer=e.data;
+                var appElement = document.querySelector('#view');
+                var temp = angular.element(appElement).scope(); 
+                temp.$apply();
+            }
+            break;            
+         case "set_tmBook":  
+                oth.user.gradeNo = e.data.gradeNo;
+                oth.user.subjectNo = e.data.subjectNo;
+                oth.user.volumeNo = e.data.volumeNo;
+                oth.user.pressNo = e.data.pressNo;
+                oth.user.bookId = e.data.tmBookId;
+                oth.user.bookName = e.data.tmBookName;
+            try{
+                var temp1 = angular.element(document.querySelector('#view')).scope(); 
+                var temp2 = angular.element(document.querySelector('#sub-view')).scope();              
+                if(oth.stArr.Chapter_list){
+                    temp2.cacheChapter();
+                }
+            }catch(err){}
+
+            break;           
+         case "imglist":
+            fn.window.setImg(e.data);
+            break;
+         case "submitMsg":
+            try{
+                var appElement = document.querySelector('#excrcise_view');
+                var temp = angular.element(appElement).scope();                        
+                temp.refresh(e.data);
+            }catch(err){}            
+            break;
+         case "statusExamMsg":
+            try{
+                var appElement = document.querySelector('#view');
+                var temp = angular.element(appElement).scope();
+                temp.refresh();
+            }catch(err){}            
+            break;                          
+         case "get_cot":
+            fn.window.Getcot();
+            break;
+         case "set_cot":
+            var st_val=setInterval(function(){
+                if (fn) {
+                    clearInterval(st_val);
+                    fn.window.Setcot(e.data);
+                }
+            },300);
+            break;
+         case "uploadlist":
+            fn.window.setTag(e.data);
+            break;  
+         case "userInfo":
+                // oth.user.loginName=e.loginName;
+                // oth.user.pwd=e.pwd;
+                oth.user.id=e.data.userId;
+                oth.user.ssid=e.data.clientsession;
+                oth.user.isTeacher=e.data.isTeacher=="1"?true:false;
+            break;          
+        case "stopMusic":
+            musicPS('no_send');
+            break;                                           
+        case "go":
+           switch(e.router){
+                case "learning":
+                    oth.user.classId=e.classId;
+                    oth.user.lclassId=e.lclassId;
+                    oth.user.lschemaid=e.lschemaid;
+                    oth.user.groupInstanceId=e.groupInstanceId;
+                break; 
+                case "show":
+                    oth.user.examitem_cot=e.content;
+                break;  
+                case "practice":
+                    oth.user.id=e.userId;
+                    oth.user.ssid=e.clientsession;
+                    oth.user.loginName=e.loginName;
+                    oth.user.pwd=e.pwd;
+                    oth.user.isTeacher=e.isTeacher=="1"?true:false;
+                    oth.user.gradeNo = e.data.gradeNo;
+                    oth.user.subjectNo = e.data.subjectNo;
+                    oth.user.volumeNo = e.data.volumeNo;
+                    oth.user.pressNo = e.data.pressNo;
+                    oth.user.bookId = e.data.tmBookId;
+                    oth.user.bookName = e.data.tmBookName;                             
+                break;          
+           }
+           oth.stArr.$state.go(e.router,{},{ reload: true });
+           break;            
+        }
+    }
+
+    //窗口调整大小
+    window.onresize=onresize_fn;
+    function onresize_fn(){
+        var h=window.innerHeight;
+        var type=FG("#m-bd").length>0?FG("#m-bd").attr('cus'):'';
+        if (type=='practice') {
+            h-=35;
+            FG("#m-bd").css("height",(h-78)+"px");
+            FG("#nav").css("height",h+"px");            
+        }
+        else if(type=='exercise'){
+            FG("#m-bd").css("height",(h-105)+"px");
+            FG(".g-ctl,.g-ctr").css("height",(h-135)+"px");
+
+            FG(".g-lv,.g-rv").css("height",(h-135)+"px");  
+        }
+        else if(type=='answering'){
+            FG("#m-bd").css("height",(h-45)+"px");
+        }
+    }
+
+    //页面前进后退
+    function next_back(a,b,c,d){
+        if (arguments.length==1) {
+            FG("#n-back").hide();
+            FG("#n-next").hide();
+        }else if(a==""){
+            FG("#n-back").hide();
+            FG("#n-next").show();
+            FG("#n-next_cot").html(b);
+            FG("#n-next").click(c);
+        }else if(c==""){
+            FG("#n-next").hide();
+            FG("#n-back").show();
+            FG("#n-back_cot").html(a);
+            FG("#n-back").click(b);    
+        }else{
+            FG("#n-back_cot").html(a);
+            FG("#n-next_cot").html(c);
+            FG("#n-back").show();
+            FG("#n-next").show();
+            FG("#n-back").click(b);
+            FG("#n-next").click(d);  
+        }
+    }
+
+    //播放或停止音乐
+    function musicPS(id,type){
+        if (type) {
+            FG("#u-music-bg").className("running");
+            FG("#u-music-icon").className("icon-pause");
+            FG("#g-music").className("start");
+            getClientData(['play',{id:id,type:type}],function(){});
+        }else{
+            FG("#u-music-bg").className("paused");
+            FG("#u-music-icon").className("icon-play2");
+            FG("#g-music").className("");
+            if (!id) {
+                getClientData(['stop',''],function(){});
+            }   
+        }
+    }
+</script>
+</body>
+</html>

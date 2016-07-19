@@ -1,0 +1,63 @@
+﻿<style>
+    .g-hd{margin-bottom: 1em;}
+    .g-hd>p{display: inline-block;width: 33%;font-size: 1.2em;}
+
+    .m-tb .th0{width: 60px;}
+    .m-tb .th1{width: 90px}
+    .m-tb .th2{width: 250px;}
+    .m-tb .th4{width: 130px}
+    .m-tb .th5{width: 200px}
+    .m-tb .td2 input{text-align: center;width: 50px;}
+    
+    .m-but{text-align: right;margin-top: 1em;}
+</style>
+<div class="g-hd">
+    <p>
+        <b>练习名称:</b>&nbsp;&nbsp;<span class="g-fc2">{{practice_name}}</span>
+    </p>
+    <p>
+        <b>总题量:</b>&nbsp;&nbsp;<span class="g-fc2">{{sum_q}}</span>
+    </p>
+    <p>
+        <b>总分:</b>&nbsp;&nbsp;<span class="g-fc2">{{sum_score}}</span>
+    </p>                        
+</div>  
+<table class="m-tb">
+    <thead>
+        <tr>
+            <th class="th0">序号</th><th class="th1">题型</th>
+            <th>题干</th><th class="th2">章节</th>
+            <th class="th4">分值</th><th class="th5">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in items">
+            <td>{{$index+1}}</td>
+            <td>{{item.q_name}}</td>
+            <td style="word-break:break-all;padding-right: 11px;" ng-bind-html="item.exam_cot"></td>            
+            <td>{{item.chapter_name}}</td>
+            <td class="td2">
+                <p ng-show="item.q_id==76?fase:true">
+                    <button class="bg1-h" ng-click="modified(item,false)"><span class="icon-minus"></span></button>
+                    <input maxlength="4" ng-blur=blur_fn(item) type="text" class="def-txt" ng-model="item.q_score">
+                    <button class="bg1-h" ng-click="modified(item,true)"><span class="icon-plus"></span></button>            
+                </p>
+                <p ng-show="item.q_id==76?true:false">
+                    {{item.q_score}}&nbsp;&nbsp;
+                    <button class="bg1-h" ng-click="setExam76_fn(item)"><span class="icon-cog"></span></button>          
+                </p>
+            </td>
+            <td>
+                <button ng-disabled="item.exam_id==''?true:false" class="bg1-h" ng-click="choose_fn(item)">自选</button>
+                <button class="bg1-h" ng-click="del_fn($index)"><span class="icon-trash"></span></button>
+                <button class="bg1-h" ng-click="move_up($index)"><span class="icon-long-arrow-up"></span></button>
+                <button class="bg1-h" ng-click="move_down($index)"><span class="icon-long-arrow-down"></span></button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p class="m-but">
+    <button class="bg1-h" ng-click="add_fn()"><span class="icon-plus"></span>&nbsp;添加试题</button>
+    <button class="bg1-h" ng-click="bulid_fn()"><span class="icon-stack"></span>&nbsp;生成练习</button>
+</p>  
+

@@ -1,0 +1,128 @@
+﻿<style>
+    .g-ct{position: relative;}
+    .g-ctl{margin-right: 320px;overflow-y: auto;}
+    .g-ctr{position: absolute;top: 0px;right: 0px;width: 300px;overflow-y: auto;font-size: 20px;padding-right: 20px}
+
+    .m-item{margin-bottom: 1em;padding-right:1em;padding-bottom:1em;border-left-style: solid;border-left-width: 2px;}
+    .m-item .v1{padding-left: 1em;margin:.5em 0px;}
+    .m-item .p1{height: 40px;line-height: 40px;font-size: 20px;
+        text-indent: 10px}
+    .m-item .p2{text-align: right;font-size: 20px;}
+    .m-item .v2{padding-left: 2em;font-size: 20px}
+    .m-item .v2>div{padding-bottom: .5em}
+    .m-item .v2 p:nth-child(n+1){padding-bottom: .3em}
+    .m-item .u-score{color: gray;font-size: 16px}
+    
+    .g-ctr .s-green{color: green;}
+    .g-ctr .s-green .square{background-color: green}
+    .g-ctr .s-red{color: red}
+    .g-ctr .s-red .square{background-color: red}
+    .g-ctr .s-black{color: black}
+    .g-ctr .s-black .square{background-color: black}
+
+    .m-but{text-align: right;}
+    .m-but button{font-size: 18px;height: 40px}
+    .m-ctr-tt{height: 40px;line-height: 40px;text-align: right;}
+    .m-ctr-tt>p{display: inline-block;margin-left: 1em}
+    
+    .m-ctr-barTt{margin-top: 2em;position: relative;height: 32px}
+    .m-ctr-barTt>div{position: absolute;top: 0px;height: 30px}
+    .m-ctr-barTt>div:first-child{left:0px;width: 70%;text-align: left;}
+    .m-ctr-barTt>div:last-child{left:70%;text-align: center;width: 30%;color: white;}
+    .m-ctr-barTt>div:first-child>p{display: inline-block;}
+    .m-ctr-barTt .s-v11{border-bottom:solid 2px black}
+    .m-ctr-barTt .s-v12{background-color: black;border-bottom:solid 2px black }
+    .m-ctr-barTt .s-v21{border-bottom:solid 2px green}
+    .m-ctr-barTt .s-v22{background-color: green;border-bottom:solid 2px green }
+    .m-ctr-barTt .square{display: inline-block;width: 13px;height: 13px;}
+    
+    .m-ctr-bar1{position: relative;height: 26px;}
+    .m-ctr-bar1>p{position: absolute;top: 0;left: 0;height: 100%;text-align: center;color: white;line-height: 26px}
+    .m-ctr-bar1>p:nth-child(1){z-index: 1;width: 100%;}
+    .m-ctr-bar1>p:nth-child(2){z-index: 2;background-color: black;}
+    .m-ctr-bar1>p:nth-child(3){z-index: 3;width: 100%;}
+    
+    .m-ctr-node{margin:.5em 0px}
+    .m-ctr-node .u2{font-size: 18px}
+    .m-ctr-node .u2>p{display: inline-block;width: 50%}
+    .m-ctr-node .u2>p:first-child{text-align: left;}
+    .m-ctr-node .u2>p:last-child{text-align: right;}
+    .m-ctr-node .u-76{margin: 1em 0px}
+
+    .m-ctr-bar2{position: relative;height: 18px;border:1px solid green;}
+    .m-ctr-bar2>p{position: absolute;top: 0;left: 0;height: 100%;text-align: center;color: white;line-height: 18px}
+    .m-ctr-bar2>p{background-color: green;}  
+</style>
+<div class="g-ct">
+    <div class="g-ctl">
+        <div class="m-item" ng-class="item.bd" ng-repeat="item in items" ng-init="p_index=$index+1">
+            <p class="p1"><b>{{$index+1}}.{{item.qname}}</b><span ng-show="myPaper.score>0" class="u-score"> ({{item.score}}分)</span></p>
+            <div class="v1" ng-bind-html="item.cot"></div>
+            <p class="p2"><b ng-click="answerFn(item)" class="f-cp">答案和解析&nbsp;&nbsp;<span ng-class="{true:'icon-angle-up',false:'icon-angle-down'}[item.is_answer]"></span></b></p>
+            <div class="v2" ng-show="item.nodes.length==0 && item.is_answer">
+                <div>
+                    <p><b>答案:</b>&nbsp;&nbsp;{{item.answer}}</p>
+                    <p><b>解析:</b>&nbsp;&nbsp;{{item.analysis}}</p>                    
+                </div>
+            </div>
+            <div class="v2" ng-show="item.nodes.length>0 && item.is_answer">
+                <div ng-repeat="node in item.nodes">
+                    <p><b>{{p_index+"."+($index+1)}} </b>{{node.qname}}<span ng-show="myPaper.score>0" class="u-score"> ({{node.score}}分)</span></p>
+                    <p><b>答案:</b>&nbsp;&nbsp;{{node.answer}}</p>
+                    <p><b>解析:</b>&nbsp;&nbsp;{{node.analysis}}</p>
+                </div>
+            </div>    
+        </div>
+    </div>
+    <div class="g-ctr">
+        <p class="m-but">
+            <button ng-show="statusExam<2" class="bg1-h" ng-click="mainFn()"><span ng-class="{true:'icon-play3',false:'icon-pause2'}[statusExam==0]"></span>&nbsp;{{statusExam==0?'开始答题':'停止答题'}}</button>
+            <button class="bg1-h" ng-click="commentFn()"><span class="icon-edit"></span>&nbsp;批注</button>
+            <!--<button class="bg1-h" ng-hide="statusExam==2" ng-click="refreshFn()"><span class="icon-refresh"></span></button>-->
+        </p>
+        <div ng-show="statusExam>0">
+            <div class="m-ctr-barTt">
+                <div class="s-v11">
+                    <p class="s-black"><span class="square"></span><span>&nbsp;提交</span></p>
+                    <p class="g-fc3"><span class="square g-bc3"></span><span>&nbsp;未提交</span></p>       
+                </div>                
+                <div class="s-v12">
+                    <b>提交数</b>
+                </div>
+            </div>
+            <div class="m-ctr-bar1">
+                <p class="g-bc3"></p>
+                <p style="width: {{submit_cot/stuList.length*100}}%;"></p>
+                <p>{{submit_cot}}/{{stuList.length}}</p>
+            </div>
+            <div class="m-ctr-barTt">
+                <div class="s-v21"></div>                
+                <div class="s-v22">
+                    <b>得分率</b>
+                </div>
+            </div>
+            <div>
+                <div class="m-ctr-node" ng-repeat="item in items" ng-init="p_index=$index+1">
+                    <div ng-if="item.qid!=76">
+                        <p><b>{{$index+1}}.{{item.qname}}</b></p>
+                        <div class="u2"><p><span class="s-green">{{item.scale}}%</span></p><p><!-- <a href="">查看详情</a> --></p></div>
+                        <div class="m-ctr-bar2">
+                            <p style="width: {{item.scale}}%;"></p>
+                        </div>                         
+                    </div>
+                    <div ng-if="item.qid==76" class="u-76">
+                        <p style="padding:.2em 0px"><b>{{$index+1}}.{{item.qname}}</b></p>
+                        <div ng-repeat="node in item.nodes" >
+                            <p><b style="font-size:17px">{{p_index+"."+($index+1)}} {{node.qname}}</b></p>
+                            <div class="u2"><p><span class="s-green">{{node.scale}}%</span></p><p><!-- <a href="">查看详情</a> --></p></div>
+                            <div class="m-ctr-bar2">
+                                <p style="width: {{node.scale}}%;"></p>
+                            </div>                             
+                        </div>                        
+                    </div>                                       
+                </div>
+            </div>     
+        </div>
+    </div>
+</div> 
+

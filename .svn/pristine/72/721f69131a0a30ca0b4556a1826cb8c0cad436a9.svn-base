@@ -1,0 +1,29 @@
+﻿<style>
+    .dlg-bd{cursor: default;min-height: 500px;}
+    .dlg-bd .bg2-h{font-weight: bold;}
+    .dlg-bd>table{width: 100%}
+    .dlg-bd>table td{padding: .6em}
+    .dlg-bd .p1{width: 60%}
+    .dlg-bd .p2{width: 30%}       
+    .dlg-bd .p3{font-size: 18px;width:10%;text-align: center;}
+    .dlg-page{height: 32px}
+    .ngdialog.ngdialog-theme-default .ngdialog-content{width: 800px;}
+
+</style>
+<div class="dlg-tt g-bc5"><span class="icon-inbox clr"></span>&nbsp;&nbsp;选择试题</div>
+<div class="dlg-bd">
+    <table>
+        <tr ng-click="click_fn(row)" ng-class="{true:'bg2-h',false:'def-h'}[row.is_active]" class="def-h v1" ng-repeat="row in rows">
+            <td class="p1" ng-bind-html="row.cot"></td>
+            <td class="p2">{{row.time}}</td>
+            <td class="p4"><span ng-show='row.is_active' class="icon-check"></span></td>
+        </tr>
+    </table>  
+</div>
+<div class="dlg-page">
+    <pager record-count="recordCount" page-size="pageSize" current-page="currentPage" on-page-change="onPageChange()"></pager>
+</div>  
+<div class="dlg-ft g-bdc">
+    <button ng-click="cancel()" class="but-cancel">取 消</button>
+    <button ng-click="ok()" class="bg1-h">确 定</button>        
+</div>
